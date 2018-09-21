@@ -217,24 +217,25 @@ class Manager(object):
         return False
 
     def startVirtualCom(self, homeId, start = False):
-        if 'configData' in self.zwNetworks[homeId] and 'virtualcom' in self.zwNetworks[homeId]['configData']:
-            virtualcom = self.zwNetworks[homeId]['configData']['virtualcom']
-            if start or virtualcom['start'] == 'auto':
-                if not self.checkVirtualCom(homeId) :
-                    if virtualcom['modul'] == 'socat' :
-                        if virtualcom['ports']['zwavectrl'] and virtualcom['ports']['emulator'] :
-                            self._log.write(LogLevel.Info, self, "Starting Virtual communication system...")
-                            subprocess.Popen(['socat','-d', '-d', 'PTY,ignoreeof,echo=0,raw,link={0}'.format(virtualcom['ports']['zwavectrl']),
-                                                    'PTY,ignoreeof,echo=0,raw,link={0}'.format(virtualcom['ports']['emulator'])])
-                            self._stop.wait(1)
-                            if not self.checkVirtualCom(homeId) :
-                                self._log.write(LogLevel.Error, self, "Error on starting Virtual communication system.")
-                    else :
-                        self._log.write(LogLevel.Warning, self, "Virtual communication configuration not handled : {0}".format(virtualcom))
-            else :
-                self._log.write(LogLevel.Always, self, "Virtual communication system not in auto start-up.")
-        else :
-            self._log.write(LogLevel.Warning, self, "No configuration set for virtual communication on zwave HomeId {0}".format(homeId))
+        print ''
+        # if 'configData' in self.zwNetworks[homeId] and 'virtualcom' in self.zwNetworks[homeId]['configData']:
+        #     virtualcom = self.zwNetworks[homeId]['configData']['virtualcom']
+        #     if start or virtualcom['start'] == 'auto':
+        #         if not self.checkVirtualCom(homeId) :
+        #             if virtualcom['modul'] == 'socat' :
+        #                 if virtualcom['ports']['zwavectrl'] and virtualcom['ports']['emulator'] :
+        #                     self._log.write(LogLevel.Info, self, "Starting Virtual communication system...")
+        #                     subprocess.Popen(['socat','-d', '-d', 'PTY,ignoreeof,echo=0,raw,link={0}'.format(virtualcom['ports']['zwavectrl']),
+        #                                             'PTY,ignoreeof,echo=0,raw,link={0}'.format(virtualcom['ports']['emulator'])])
+        #                     self._stop.wait(1)
+        #                     if not self.checkVirtualCom(homeId) :
+        #                         self._log.write(LogLevel.Error, self, "Error on starting Virtual communication system.")
+        #             else :
+        #                 self._log.write(LogLevel.Warning, self, "Virtual communication configuration not handled : {0}".format(virtualcom))
+        #     else :
+        #         self._log.write(LogLevel.Always, self, "Virtual communication system not in auto start-up.")
+        # else :
+        #     self._log.write(LogLevel.Warning, self, "No configuration set for virtual communication on zwave HomeId {0}".format(homeId))
 
     def getVersionAsString(self):
         return "{0}.{1}.{2}".format(ozw_vers_major, ozw_vers_minor, ozw_vers_revision)
@@ -411,21 +412,21 @@ class Manager(object):
                 n.homeId = newHomeId
 
     def startDriver(self, homeId):
-        if self.checkVirtualCom(homeId) :
-            serialport = self.zwNetworks[homeId]['configData']['virtualcom']['ports']['emulator']
-            if self.drivers:
-                for driver in self.drivers:
-                    if driver.serialport is None: # Object Driver not assigned and ready to set serialport
-                        driver.setSerialport(serialport)
-                        self._log.write(LogLevel.Info, self, "Added driver for controller {0}".format(serialport))
-                        driver.Start()
-                        return True
-                    elif driver.serialport == serialport:
-                        self._log.write(LogLevel.Warning, self, "Cannot add driver for controller {0} - driver already exists".format(serialport))
-                        break
-                self._log.write(LogLevel.Warning, self, "Cannot add driver for controller {0} - no emulate driver available".format(serialport))
-            else:
-                self._log.write(LogLevel.Info, Warning, "Cannot add driver for controller {0} - no emulate driver loaded".format(serialport))
+        #if self.checkVirtualCom(homeId) :
+        serialport = self.zwNetworks[homeId]['configData']['virtualcom']['ports']['emulator']
+        if self.drivers:
+            for driver in self.drivers:
+                if driver.serialport is None: # Object Driver not assigned and ready to set serialport
+                    driver.setSerialport(serialport)
+                    self._log.write(LogLevel.Info, self, "Added driver for controller {0}".format(serialport))
+                    driver.Start()
+                    return True
+                elif driver.serialport == serialport:
+                    self._log.write(LogLevel.Warning, self, "Cannot add driver for controller {0} - driver already exists".format(serialport))
+                    break
+            self._log.write(LogLevel.Warning, self, "Cannot add driver for controller {0} - no emulate driver available".format(serialport))
+        else:
+            self._log.write(LogLevel.Info, Warning, "Cannot add driver for controller {0} - no emulate driver loaded".format(serialport))
         return False
 
     def GetDriver(self, homeId):

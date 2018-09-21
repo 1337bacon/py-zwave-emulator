@@ -3,8 +3,8 @@
         "start" : "auto",
         "modul" : "socat",
         "ports" : {
-            "zwavectrl" : "/tmp/ttyS0",
-            "emulator" : "/tmp/ttyS1"
+            "zwavectrl" : "COM5",
+            "emulator" : "COM6"
             }
         },
     "controller" : {

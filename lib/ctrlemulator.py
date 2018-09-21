@@ -41,11 +41,12 @@ from lib.defs import *
 from lib.log import LogLevel
 
 
-PORT = "/tmp/ttyS1"
+#PORT = "/tmp/ttyS1"
+PORT = "COM6"
 
 class OZWSerialEmul:
 
-    def __init__(self, port, baud = 19200, timeout = 0,  stop = None, callback = None, setWaitingForAck = None, log =None, cbTimeOut = 0):
+    def __init__(self, port, baud = 115200, timeout = 0,  stop = None, callback = None, setWaitingForAck = None, log =None, cbTimeOut = 0):
         self._stop = stop
         self._callback = callback
         self._setWaitingForAck = setWaitingForAck
@@ -53,7 +54,7 @@ class OZWSerialEmul:
         self._cbTimeOut = cbTimeOut
         self._lockWrite = threading.Lock()  # use to lock write data on serial when waiting for an ACK
         self._log.write(LogLevel.Info, "  Opening emulate controller {0}".format(port))
-        self._serial = serial.Serial(port, baud, timeout = timeout, rtscts=True, dsrdtr=True)
+        self._serial = serial.Serial(port, baud, timeout = timeout, rtscts=False, dsrdtr=False)
         self._readMsg = threading.Thread(None, self.waitData, "th_Handle_Read_Msg", (), {})
         self._readMsg.start()
 
